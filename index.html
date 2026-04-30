@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chris &amp; Val's Golden Wedding Anniversary</title>
+    <meta
+      name="description"
+      content="Join Chris and Val to celebrate 50 years of marriage at Curlew Rowing Club, Greenwich."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              gold: "#D4AF37"
+            },
+            fontFamily: {
+              serif: ["Georgia", "Times New Roman", "serif"]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .gold-border {
+        border-image: linear-gradient(135deg, #d4af37, #f2e3a1, #d4af37) 1;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .soft-fade {
+          animation: softFade 700ms ease-out both;
+        }
+
+        @keyframes softFade {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-white text-stone-900 font-serif">
+    <a
+      href="#main-content"
+      class="absolute left-3 top-3 z-50 -translate-y-24 rounded-md bg-gold px-4 py-2 text-sm font-semibold text-black focus:translate-y-0 focus:outline-none focus:ring-4 focus:ring-black"
+    >
+      Skip to content
+    </a>
+
+    <header class="relative overflow-hidden border-b-4 border-gold bg-white">
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 flex items-center justify-center text-[11rem] font-bold text-gold/10 md:text-[14rem]"
+      >
+        50
+      </div>
+      <div class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-20">
+        <div class="grid items-center gap-10 md:grid-cols-2">
+          <section class="soft-fade">
+            <p class="mb-3 text-sm uppercase tracking-[0.25em] text-gold">
+              Golden Celebration
+            </p>
+            <h1 class="text-4xl leading-tight md:text-5xl">
+              Chris &amp; Val&apos;s Golden Wedding Anniversary
+            </h1>
+            <dl class="mt-8 space-y-3 text-lg">
+              <div>
+                <dt class="inline font-semibold">Date:</dt>
+                <dd class="ml-2 inline">Saturday, 3rd October 2026</dd>
+              </div>
+              <div>
+                <dt class="inline font-semibold">Time:</dt>
+                <dd class="ml-2 inline">12:00pm - 4:00pm</dd>
+              </div>
+              <div>
+                <dt class="inline font-semibold">Location:</dt>
+                <dd class="ml-2 inline">Curlew Rowing Club, Greenwich</dd>
+              </div>
+            </dl>
+          </section>
+          <figure class="soft-fade mx-auto aspect-square w-full max-w-xs md:mx-0 md:justify-self-end md:max-w-sm">
+            <img
+              src="./images/chris-val-wedding.png"
+              alt="Chris and Val on their wedding day"
+              class="h-full w-full object-contain"
+            />
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6" aria-labelledby="about-heading">
+        <h2 id="about-heading" class="mb-4 text-3xl text-gold">The Celebration</h2>
+        <p class="max-w-3xl text-lg leading-relaxed">
+          Please join us to celebrate 50 years of marriage! We&apos;ll be enjoying a buffet, drinks,
+          and cake with a beautiful view of the Thames. Your presence is the only present we require.
+        </p>
+      </section>
+
+      <section
+        class="mx-auto max-w-6xl px-4 py-12 sm:px-6"
+        aria-labelledby="directions-heading"
+      >
+        <h2 id="directions-heading" class="mb-6 text-3xl text-gold">How Do I Get There?</h2>
+        <div class="grid gap-8 md:grid-cols-2">
+          <article class="rounded-xl border-2 border-gold p-5">
+            <h3 class="mb-4 text-2xl">Step-by-Step Directions</h3>
+            <p class="mb-3 text-base">
+              <strong>Address:</strong> Curlew Rowing Club, Crane St, London SE10 9DG
+            </p>
+            <ol class="list-decimal space-y-4 pl-6">
+              <li>
+                <strong>Step 1:</strong> Travel to <strong>Cutty Sark DLR</strong> station.
+                This is the easiest public transport option.
+              </li>
+              <li>
+                <strong>Step 2:</strong> Exit station and walk toward Greenwich town centre, then
+                follow signs for the riverside. It is approximately a 10-minute walk.
+              </li>
+              <li>
+                <strong>Step 3:</strong> If coming via <strong>North Greenwich Tube</strong>, take
+                a local bus/taxi to Greenwich, then continue on foot to Crane Street.
+              </li>
+              <li>
+                <strong>Step 4:</strong> Parking is limited. Try nearby car parks such as
+                <strong>Cutty Sark Gardens</strong> and allow extra time for walking.
+              </li>
+            </ol>
+            <p class="mt-4 rounded-md bg-amber-50 p-3 text-sm" role="note">
+              Street parking can be very limited on busy days, so public transport is strongly recommended.
+            </p>
+          </article>
+
+          <div class="space-y-6">
+            <figure class="rounded-xl border-2 border-dashed border-gold p-5">
+              <figcaption class="mb-3 text-xl font-semibold">Google Maps Placeholder</figcaption>
+              <div
+                class="flex min-h-44 items-center justify-center rounded-lg bg-stone-100 text-stone-600"
+              >
+                Embed map iframe here
+              </div>
+            </figure>
+            <figure class="rounded-xl border-2 border-dashed border-gold p-5">
+              <figcaption class="mb-3 text-xl font-semibold">Walking Route Photo Placeholder</figcaption>
+              <div
+                class="flex min-h-44 items-center justify-center rounded-lg bg-stone-100 text-stone-600"
+              >
+                Add route screenshot/photo here
+              </div>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-4 py-12 sm:px-6" aria-labelledby="rsvp-heading">
+        <div class="rounded-xl border-4 gold-border border-gold bg-white p-6 shadow-sm">
+          <h2 id="rsvp-heading" class="text-3xl text-gold">RSVP</h2>
+          <p class="mt-2 text-base">
+            RSVP by <strong>Friday, 4th September 2026</strong>.
+          </p>
+          <form id="rsvp-form" class="mt-6 space-y-5" novalidate>
+            <div>
+              <label for="fullName" class="mb-2 block text-lg font-semibold">Full Name</label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                autocomplete="name"
+                required
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+              />
+              <p id="fullName-error" class="mt-1 hidden text-sm text-red-700" aria-live="polite"></p>
+            </div>
+
+            <div>
+              <label for="guestCount" class="mb-2 block text-lg font-semibold">Number of Guests</label>
+              <select
+                id="guestCount"
+                name="guestCount"
+                autocomplete="off"
+                required
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+              >
+                <option value="">Please select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5+">5+</option>
+              </select>
+              <p id="guestCount-error" class="mt-1 hidden text-sm text-red-700" aria-live="polite"></p>
+            </div>
+
+            <div>
+              <label for="dietary" class="mb-2 block text-lg font-semibold">Dietary Requirements</label>
+              <textarea
+                id="dietary"
+                name="dietary"
+                rows="4"
+                autocomplete="off"
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+                aria-describedby="dietary-help"
+              ></textarea>
+              <p id="dietary-help" class="mt-1 text-sm text-stone-600">
+                Please include allergies or special dietary needs.
+              </p>
+            </div>
+
+            <div aria-hidden="true" class="absolute -left-[10000px] top-auto h-px w-px overflow-hidden">
+              <label for="website">Website</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full rounded-lg bg-gold px-6 py-4 text-xl font-semibold text-black shadow-sm transition hover:brightness-95 focus:outline-none focus:ring-4 focus:ring-black"
+            >
+              Submit RSVP
+            </button>
+          </form>
+          <p id="form-status" class="mt-4 text-base font-medium" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t-4 border-gold bg-stone-50">
+      <section class="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6">
+        <h2 class="text-2xl text-gold">Contact</h2>
+        <p class="mt-2 text-base">
+          Questions? Reach out to [Name] or [Dad&apos;s Name] at [Phone/Email].
+        </p>
+        <p class="mt-6 text-lg font-semibold">We can&apos;t wait to see you there!</p>
+        <details class="mx-auto mt-6 max-w-xl rounded-lg border border-gold bg-white p-4 text-left">
+          <summary class="cursor-pointer text-base font-semibold text-stone-900">Host admin tip</summary>
+          <p class="mt-2 text-sm text-stone-700">
+            To export RSVPs, open the Google Sheet, then use File &gt; Download &gt; Comma Separated Values (.csv).
+          </p>
+        </details>
+      </section>
+    </footer>
+
+    <script>
+      const form = document.getElementById("rsvp-form");
+      const statusEl = document.getElementById("form-status");
+      const submitButton = form.querySelector('button[type="submit"]');
+      const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsp17pt9I2_3_BaXIcjf98ADkiLpk-2SyjzCD6Eeaw4WszQTlr8ljc33JzYuYwm7_u/exec";
+
+      function setError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorEl = document.getElementById(fieldId + "-error");
+        if (!field || !errorEl) return;
+        if (message) {
+          field.setAttribute("aria-invalid", "true");
+          field.setAttribute("aria-describedby", fieldId + "-error");
+          errorEl.textContent = message;
+          errorEl.classList.remove("hidden");
+        } else {
+          field.removeAttribute("aria-invalid");
+          if (fieldId !== "dietary") {
+            field.removeAttribute("aria-describedby");
+          }
+          errorEl.textContent = "";
+          errorEl.classList.add("hidden");
+        }
+      }
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const data = new FormData(form);
+        const fullName = (data.get("fullName") || "").toString().trim();
+        const guestCount = (data.get("guestCount") || "").toString().trim();
+        const dietary = (data.get("dietary") || "").toString().trim();
+        const website = (data.get("website") || "").toString().trim();
+
+        let hasError = false;
+
+        if (!fullName) {
+          setError("fullName", "Please enter your full name.");
+          hasError = true;
+        } else {
+          setError("fullName", "");
+        }
+
+        if (!guestCount) {
+          setError("guestCount", "Please choose the number of guests attending.");
+          hasError = true;
+        } else {
+          setError("guestCount", "");
+        }
+
+        if (hasError) {
+          statusEl.textContent = "Please fix the highlighted fields and try again.";
+          statusEl.className = "mt-4 text-base font-medium text-red-700";
+          return;
+        }
+
+        if (website) {
+          statusEl.textContent = "Thank you! Your RSVP has been recorded.";
+          statusEl.className = "mt-4 text-base font-medium text-green-700";
+          form.reset();
+          return;
+        }
+
+        if (GOOGLE_SHEETS_WEBHOOK_URL.includes("PASTE_YOUR_GOOGLE")) {
+          statusEl.textContent =
+            "RSVP form is not connected yet. Please add your Google Sheets webhook URL in index.html.";
+          statusEl.className = "mt-4 text-base font-medium text-red-700";
+          return;
+        }
+
+        const payload = {
+          fullName,
+          guestCount,
+          dietary,
+          submittedAt: new Date().toISOString()
+        };
+
+        submitButton.disabled = true;
+        submitButton.setAttribute("aria-busy", "true");
+        submitButton.classList.add("opacity-70", "cursor-not-allowed");
+        statusEl.textContent = "Submitting your RSVP...";
+        statusEl.className = "mt-4 text-base font-medium text-stone-700";
+
+        try {
+          await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+
+          statusEl.textContent = "Thank you! Your RSVP has been recorded.";
+          statusEl.className = "mt-4 text-base font-medium text-green-700";
+          form.reset();
+        } catch (error) {
+          statusEl.textContent =
+            "We could not submit your RSVP right now. Please try again in a moment.";
+          statusEl.className = "mt-4 text-base font-medium text-red-700";
+          console.error("RSVP submit error:", error);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.removeAttribute("aria-busy");
+          submitButton.classList.remove("opacity-70", "cursor-not-allowed");
+        }
+      });
+    </script>
+  </body>
+</html>
