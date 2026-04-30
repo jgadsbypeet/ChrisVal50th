@@ -243,6 +243,9 @@
           <p class="mt-2 text-sm text-stone-700">
             To export RSVPs, open the Google Sheet, then use File &gt; Download &gt; Comma Separated Values (.csv).
           </p>
+          <p class="mt-2 text-sm text-stone-700">
+            For live RSVPs, set <strong>GOOGLE_SHEETS_WEBHOOK_URL</strong> in Netlify site environment variables.
+          </p>
         </details>
       </section>
     </footer>
@@ -251,7 +254,7 @@
       const form = document.getElementById("rsvp-form");
       const statusEl = document.getElementById("form-status");
       const submitButton = form.querySelector('button[type="submit"]');
-      const GOOGLE_SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxsp17pt9I2_3_BaXIcjf98ADkiLpk-2SyjzCD6Eeaw4WszQTlr8ljc33JzYuYwm7_u/exec";
+      const RSVP_API_URL = "/.netlify/functions/rsvp";
 
       function setError(fieldId, message) {
         const field = document.getElementById(fieldId);
@@ -310,13 +313,6 @@
           return;
         }
 
-        if (GOOGLE_SHEETS_WEBHOOK_URL.includes("PASTE_YOUR_GOOGLE")) {
-          statusEl.textContent =
-            "RSVP form is not connected yet. Please add your Google Sheets webhook URL in index.html.";
-          statusEl.className = "mt-4 text-base font-medium text-red-700";
-          return;
-        }
-
         const payload = {
           fullName,
           guestCount,
@@ -331,12 +327,15 @@
         statusEl.className = "mt-4 text-base font-medium text-stone-700";
 
         try {
-          await fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+          const response = await fetch(RSVP_API_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
+
+          if (!response.ok) {
+            throw new Error("RSVP API request failed");
+          }
 
           statusEl.textContent = "Thank you! Your RSVP has been recorded.";
           statusEl.className = "mt-4 text-base font-medium text-green-700";
