@@ -110,7 +110,7 @@
         aria-labelledby="directions-heading"
       >
         <h2 id="directions-heading" class="mb-6 text-3xl text-gold">How Do I Get There?</h2>
-        <div class="grid gap-8 md:grid-cols-2">
+        <div class="grid gap-8 md:grid-cols-2 md:items-stretch">
           <article class="rounded-xl border-2 border-gold p-5">
             <h3 class="mb-4 text-2xl">Step-by-Step Directions</h3>
             <p class="mb-3 text-base">
@@ -139,21 +139,18 @@
             </p>
           </article>
 
-          <div class="space-y-6">
-            <figure class="rounded-xl border-2 border-dashed border-gold p-5">
-              <figcaption class="mb-3 text-xl font-semibold">Google Maps Placeholder</figcaption>
-              <div
-                class="flex min-h-44 items-center justify-center rounded-lg bg-stone-100 text-stone-600"
-              >
-                Embed map iframe here
-              </div>
-            </figure>
-            <figure class="rounded-xl border-2 border-dashed border-gold p-5">
-              <figcaption class="mb-3 text-xl font-semibold">Walking Route Photo Placeholder</figcaption>
-              <div
-                class="flex min-h-44 items-center justify-center rounded-lg bg-stone-100 text-stone-600"
-              >
-                Add route screenshot/photo here
+          <div class="md:h-full">
+            <figure class="flex h-full flex-col rounded-xl border-2 border-dashed border-gold p-5">
+              <figcaption class="mb-3 text-xl font-semibold">Venue Map</figcaption>
+              <div class="flex-1 overflow-hidden rounded-lg border border-gold/40">
+                <iframe
+                  title="Map showing Curlew Rowing Club, Crane Street, London SE10 9DG"
+                  src="https://www.google.com/maps?q=Curlew+Rowing+Club,+Crane+St,+London+SE10+9DG&output=embed"
+                  class="min-h-44 h-full w-full"
+                  loading="lazy"
+                  allowfullscreen
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             </figure>
           </div>
