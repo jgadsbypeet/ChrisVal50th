@@ -21,6 +21,10 @@ exports.handler = async function (event) {
     const payload = {
       fullName: (parsedBody.fullName || "").toString(),
       guestCount: (parsedBody.guestCount || "").toString(),
+      mealPreference: (parsedBody.mealPreference || "").toString(),
+      allergies: Array.isArray(parsedBody.allergies)
+        ? parsedBody.allergies.map((item) => item.toString()).join(", ")
+        : "",
       dietary: (parsedBody.dietary || "").toString(),
       submittedAt: (parsedBody.submittedAt || new Date().toISOString()).toString()
     };

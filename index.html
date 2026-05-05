@@ -147,8 +147,8 @@
               <figcaption class="mb-3 text-xl font-semibold">Venue Map</figcaption>
               <div class="flex-1 overflow-hidden rounded-lg border border-gold/40">
                 <iframe
-                  title="Map showing Curlew Rowing Club, Crane Street, London SE10 9DG"
-                  src="https://www.google.com/maps?q=Curlew+Rowing+Club,+Crane+St,+London+SE10+9DG&output=embed"
+                  title="Map showing Trafalgar Tavern, Greenwich, London"
+                  src="https://www.google.com/maps?q=Trafalgar+Tavern,+Park+Row,+Greenwich,+London&output=embed"
                   class="min-h-44 h-full w-full"
                   loading="lazy"
                   allowfullscreen
@@ -200,7 +200,57 @@
             </div>
 
             <div>
-              <label for="dietary" class="mb-2 block text-lg font-semibold">Dietary Requirements</label>
+              <label for="mealPreference" class="mb-2 block text-lg font-semibold">Meal Preference</label>
+              <select
+                id="mealPreference"
+                name="mealPreference"
+                autocomplete="off"
+                required
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+              >
+                <option value="">Please select</option>
+                <option value="Chicken">Chicken</option>
+                <option value="Fish">Fish</option>
+                <option value="Vegetarian">Vegetarian</option>
+              </select>
+              <p
+                id="mealPreference-error"
+                class="mt-1 hidden text-sm text-red-700"
+                aria-live="polite"
+              ></p>
+            </div>
+
+            <fieldset class="rounded-lg border-2 border-stone-300 p-4">
+              <legend class="px-2 text-lg font-semibold">Allergies</legend>
+              <p id="allergies-help" class="mb-3 text-sm text-stone-600">
+                Select any that apply (for example: gluten free/celiac, nuts).
+              </p>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    name="allergies"
+                    value="Gluten free/Celiac"
+                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
+                  />
+                  <span>Gluten free/Celiac</span>
+                </label>
+                <label class="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    name="allergies"
+                    value="Nuts"
+                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
+                  />
+                  <span>Nuts</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="dietary" class="mb-2 block text-lg font-semibold">
+                Additional Dietary or Allergy Details
+              </label>
               <textarea
                 id="dietary"
                 name="dietary"
@@ -210,7 +260,7 @@
                 aria-describedby="dietary-help"
               ></textarea>
               <p id="dietary-help" class="mt-1 text-sm text-stone-600">
-                Please include allergies or special dietary needs.
+                Add any other allergies (for example dairy) or dietary requirements.
               </p>
             </div>
 
@@ -281,6 +331,13 @@
         const data = new FormData(form);
         const fullName = (data.get("fullName") || "").toString().trim();
         const guestCount = (data.get("guestCount") || "").toString().trim();
+        const mealPreference = (data.get("mealPreference") || "").toString().trim();
+        const allergies = data
+          .getAll("allergies")
+          .map(function (value) {
+            return value.toString().trim();
+          })
+          .filter(Boolean);
         const dietary = (data.get("dietary") || "").toString().trim();
         const website = (data.get("website") || "").toString().trim();
 
@@ -300,6 +357,13 @@
           setError("guestCount", "");
         }
 
+        if (!mealPreference) {
+          setError("mealPreference", "Please choose a meal preference.");
+          hasError = true;
+        } else {
+          setError("mealPreference", "");
+        }
+
         if (hasError) {
           statusEl.textContent = "Please fix the highlighted fields and try again.";
           statusEl.className = "mt-4 text-base font-medium text-red-700";
@@ -316,6 +380,8 @@
         const payload = {
           fullName,
           guestCount,
+          mealPreference,
+          allergies,
           dietary,
           submittedAt: new Date().toISOString()
         };
