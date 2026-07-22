@@ -18,14 +18,35 @@ exports.handler = async function (event) {
 
   try {
     const parsedBody = JSON.parse(event.body || "{}");
+    const allergyValues = Array.isArray(parsedBody.allergies)
+      ? parsedBody.allergies.map((item) => item.toString().trim()).filter(Boolean)
+      : [];
+    const allergiesText = allergyValues.join(", ");
+    const glutenFreeCeliac = allergyValues.includes("Gluten free/Celiac") ? "Yes" : "";
+    const nuts = allergyValues.includes("Nuts") ? "Yes" : "";
+    const mealPreference = (parsedBody.mealPreference || "").toString().trim();
+    const dietaryDetails = (parsedBody.dietary || "").toString().trim();
+    const dietaryParts = [];
+
+    if (mealPreference) {
+      dietaryParts.push(`Meal: ${mealPreference}`);
+    }
+    if (allergiesText) {
+      dietaryParts.push(`Allergies: ${allergiesText}`);
+    }
+    if (dietaryDetails) {
+      dietaryParts.push(dietaryDetails);
+    }
+
     const payload = {
       fullName: (parsedBody.fullName || "").toString(),
       guestCount: (parsedBody.guestCount || "").toString(),
-      mealPreference: (parsedBody.mealPreference || "").toString(),
-      allergies: Array.isArray(parsedBody.allergies)
-        ? parsedBody.allergies.map((item) => item.toString()).join(", ")
-        : "",
-      dietary: (parsedBody.dietary || "").toString(),
+      mealPreference,
+      glutenFreeCeliac,
+      nuts,
+      allergies: allergiesText,
+      dietaryDetails,
+      dietary: dietaryParts.join(" | "),
       submittedAt: (parsedBody.submittedAt || new Date().toISOString()).toString()
     };
 
