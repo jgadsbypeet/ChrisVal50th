@@ -11,21 +11,19 @@ function normalizeGuest(rawGuest) {
   };
 }
 
-function formatGuestLine(guest, index) {
-  const parts = [`Guest ${index + 1} - ${guest.name || "Unnamed"}: ${guest.mealPreference || "Not specified"}`];
-
-  if (guest.allergies.length) {
-    parts.push(`Allergies: ${guest.allergies.join(", ")}`);
-  }
-  if (guest.dietary) {
-    parts.push(guest.dietary);
-  }
-
-  return parts.join("; ");
+function guestToSheetRecord(guest) {
+  return {
+    name: guest.name,
+    mealPreference: guest.mealPreference,
+    glutenFreeCeliac: guest.allergies.includes("Gluten free/Celiac") ? "Yes" : "",
+    nuts: guest.allergies.includes("Nuts") ? "Yes" : "",
+    allergies: guest.allergies.join(", "),
+    dietary: guest.dietary
+  };
 }
 
 function buildRsvpPayload(parsedBody) {
-  const guests = Array.isArray(parsedBody.guests)
+  let guests = Array.isArray(parsedBody.guests)
     ? parsedBody.guests.map(normalizeGuest)
     : [];
 
@@ -43,30 +41,16 @@ function buildRsvpPayload(parsedBody) {
     );
   }
 
-  const guestDetails = guests.map(formatGuestLine).join("\n");
-  const mealPreference = guests.map((guest) => guest.mealPreference).filter(Boolean).join("; ");
-  const allergyValues = guests.flatMap((guest) => guest.allergies);
-  const allergiesText = [...new Set(allergyValues)].join(", ");
-  const glutenFreeCeliac = allergyValues.includes("Gluten free/Celiac") ? "Yes" : "";
-  const nuts = allergyValues.includes("Nuts") ? "Yes" : "";
-  const dietaryDetails = guests
-    .map((guest) => guest.dietary)
-    .filter(Boolean)
-    .join(" | ");
-
-  const dietaryParts = guests.map(formatGuestLine);
+  const submittedAt = (parsedBody.submittedAt || new Date().toISOString()).toString();
+  const fullName = (parsedBody.fullName || "").toString();
+  const guestCount = (parsedBody.guestCount || guests.length.toString()).toString();
+  const sheetGuests = guests.map(guestToSheetRecord);
 
   return {
-    fullName: (parsedBody.fullName || "").toString(),
-    guestCount: (parsedBody.guestCount || guests.length.toString()).toString(),
-    guestDetails,
-    mealPreference,
-    glutenFreeCeliac,
-    nuts,
-    allergies: allergiesText,
-    dietaryDetails,
-    dietary: dietaryParts.join(" | "),
-    submittedAt: (parsedBody.submittedAt || new Date().toISOString()).toString()
+    fullName,
+    guestCount,
+    submittedAt,
+    guests: sheetGuests
   };
 }
 
@@ -114,7 +98,7 @@ exports.handler = async function (event) {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: true })
+      body: JSON.stringify({ ok: true, rowsAdded: payload.guests.length })
     };
   } catch (error) {
     return {
