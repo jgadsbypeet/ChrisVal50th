@@ -179,7 +179,7 @@
           </p>
           <form id="rsvp-form" class="mt-6 space-y-5" novalidate>
             <div>
-              <label for="fullName" class="mb-2 block text-lg font-semibold">Full Name</label>
+              <label for="fullName" class="mb-2 block text-lg font-semibold">Your full name</label>
               <input
                 id="fullName"
                 name="fullName"
@@ -192,13 +192,15 @@
             </div>
 
             <div>
-              <label for="guestCount" class="mb-2 block text-lg font-semibold">Number of Guests</label>
+              <label for="guestCount" class="mb-2 block text-lg font-semibold">Number of guests (including you)</label>
               <select
                 id="guestCount"
                 name="guestCount"
                 autocomplete="off"
                 required
                 class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+                aria-describedby="guestCount-help"
+                data-describedby-help="guestCount-help"
               >
                 <option value="">Please select</option>
                 <option value="1">1</option>
@@ -207,73 +209,13 @@
                 <option value="4">4</option>
                 <option value="5+">5+</option>
               </select>
+              <p id="guestCount-help" class="mt-1 text-sm text-stone-600">
+                We&apos;ll ask for meal and dietary details for each guest.
+              </p>
               <p id="guestCount-error" class="mt-1 hidden text-sm text-red-700" aria-live="polite"></p>
             </div>
 
-            <div>
-              <label for="mealPreference" class="mb-2 block text-lg font-semibold">Meal Preference</label>
-              <select
-                id="mealPreference"
-                name="mealPreference"
-                autocomplete="off"
-                required
-                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
-              >
-                <option value="">Please select</option>
-                <option value="Chicken">Chicken</option>
-                <option value="Fish">Fish</option>
-                <option value="Vegetarian">Vegetarian</option>
-              </select>
-              <p
-                id="mealPreference-error"
-                class="mt-1 hidden text-sm text-red-700"
-                aria-live="polite"
-              ></p>
-            </div>
-
-            <fieldset class="rounded-lg border-2 border-stone-300 p-4">
-              <legend class="px-2 text-lg font-semibold">Allergies</legend>
-              <p id="allergies-help" class="mb-3 text-sm text-stone-600">
-                Select any that apply (for example: gluten free/celiac, nuts).
-              </p>
-              <div class="space-y-2">
-                <label class="flex items-center gap-2 text-base">
-                  <input
-                    type="checkbox"
-                    name="allergies"
-                    value="Gluten free/Celiac"
-                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
-                  />
-                  <span>Gluten free/Celiac</span>
-                </label>
-                <label class="flex items-center gap-2 text-base">
-                  <input
-                    type="checkbox"
-                    name="allergies"
-                    value="Nuts"
-                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
-                  />
-                  <span>Nuts</span>
-                </label>
-              </div>
-            </fieldset>
-
-            <div>
-              <label for="dietary" class="mb-2 block text-lg font-semibold">
-                Additional Dietary or Allergy Details
-              </label>
-              <textarea
-                id="dietary"
-                name="dietary"
-                rows="4"
-                autocomplete="off"
-                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
-                aria-describedby="dietary-help"
-              ></textarea>
-              <p id="dietary-help" class="mt-1 text-sm text-stone-600">
-                Add any other allergies (for example dairy) or dietary requirements.
-              </p>
-            </div>
+            <div id="guest-details" class="space-y-5" hidden></div>
 
             <div aria-hidden="true" class="absolute -left-[10000px] top-auto h-px w-px overflow-hidden">
               <label for="website">Website</label>
@@ -308,8 +250,8 @@
             For live RSVPs, set <strong>GOOGLE_SHEETS_WEBHOOK_URL</strong> in Netlify site environment variables.
           </p>
           <p class="mt-2 text-sm text-stone-700">
-            If meal or allergy columns stay blank, update the Google Apps Script from
-            <strong>google-apps-script/rsvp-webhook.gs</strong> and redeploy the web app.
+            Sheet headers: Timestamp, Contact Name, Guest Count, Guest Details, Meal Preference (summary),
+            Gluten free/Celiac, Nuts, Allergies (summary), Additional Dietary Details.
           </p>
         </details>
       </section>
@@ -319,12 +261,192 @@
       const form = document.getElementById("rsvp-form");
       const statusEl = document.getElementById("form-status");
       const submitButton = form.querySelector('button[type="submit"]');
+      const guestCountSelect = document.getElementById("guestCount");
+      const guestDetailsContainer = document.getElementById("guest-details");
       const RSVP_API_URL = "/.netlify/functions/rsvp";
+
+      function guestCountToNumber(value) {
+        if (value === "5+") {
+          return 5;
+        }
+        const parsed = parseInt(value, 10);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      function escapeHtml(value) {
+        return value
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function collectGuestValuesFromDom() {
+        const data = new FormData(form);
+        const guestCount = guestCountToNumber((data.get("guestCount") || "").toString());
+        const guests = [];
+
+        for (let index = 0; index < guestCount; index += 1) {
+          const name =
+            index === 0
+              ? (data.get("fullName") || "").toString().trim()
+              : (data.get(`guest-${index}-name`) || "").toString().trim();
+          guests.push({
+            name,
+            mealPreference: (data.get(`guest-${index}-mealPreference`) || "").toString().trim(),
+            allergies: data
+              .getAll(`guest-${index}-allergies`)
+              .map(function (value) {
+                return value.toString().trim();
+              })
+              .filter(Boolean),
+            dietary: (data.get(`guest-${index}-dietary`) || "").toString().trim()
+          });
+        }
+
+        return guests;
+      }
+
+      function renderGuestSections() {
+        const guestCount = guestCountToNumber(guestCountSelect.value);
+        const previousGuests = collectGuestValuesFromDom();
+        guestDetailsContainer.innerHTML = "";
+
+        if (!guestCount) {
+          guestDetailsContainer.hidden = true;
+          return;
+        }
+
+        guestDetailsContainer.hidden = false;
+        const fragment = document.createDocumentFragment();
+
+        for (let index = 0; index < guestCount; index += 1) {
+          const previous = previousGuests[index] || {
+            name: "",
+            mealPreference: "",
+            allergies: [],
+            dietary: ""
+          };
+          const guestNumber = index + 1;
+          const guestLabel = index === 0 ? `Guest ${guestNumber} (you)` : `Guest ${guestNumber}`;
+          const section = document.createElement("section");
+          section.className = "rounded-lg border-2 border-stone-300 p-4 space-y-4";
+          section.setAttribute("aria-labelledby", `guest-${index}-heading`);
+
+          let sectionHtml = `<h3 id="guest-${index}-heading" class="text-xl font-semibold text-gold">${guestLabel}</h3>`;
+
+          if (index > 0) {
+            sectionHtml += `
+              <div>
+                <label for="guest-${index}-name" class="mb-2 block text-lg font-semibold">Full name</label>
+                <input
+                  id="guest-${index}-name"
+                  name="guest-${index}-name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  value="${escapeHtml(previous.name)}"
+                  class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+                />
+                <p id="guest-${index}-name-error" class="mt-1 hidden text-sm text-red-700" aria-live="polite"></p>
+              </div>
+            `;
+          }
+
+          const mealOptions = ["", "Chicken", "Fish", "Vegetarian"]
+            .map(function (option) {
+              const selected = option === previous.mealPreference ? " selected" : "";
+              const label = option === "" ? "Please select" : option;
+              return `<option value="${option}"${selected}>${label}</option>`;
+            })
+            .join("");
+
+          const glutenChecked = previous.allergies.includes("Gluten free/Celiac") ? " checked" : "";
+          const nutsChecked = previous.allergies.includes("Nuts") ? " checked" : "";
+
+          sectionHtml += `
+            <div>
+              <label for="guest-${index}-mealPreference" class="mb-2 block text-lg font-semibold">Meal preference</label>
+              <select
+                id="guest-${index}-mealPreference"
+                name="guest-${index}-mealPreference"
+                autocomplete="off"
+                required
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+              >
+                ${mealOptions}
+              </select>
+              <p id="guest-${index}-mealPreference-error" class="mt-1 hidden text-sm text-red-700" aria-live="polite"></p>
+            </div>
+            <fieldset class="rounded-lg border-2 border-stone-200 p-4">
+              <legend class="px-2 text-lg font-semibold">Allergies</legend>
+              <p id="guest-${index}-allergies-help" class="mb-3 text-sm text-stone-600">
+                Select any that apply (for example: gluten free/celiac, nuts).
+              </p>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    name="guest-${index}-allergies"
+                    value="Gluten free/Celiac"
+                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
+                    ${glutenChecked}
+                  />
+                  <span>Gluten free/Celiac</span>
+                </label>
+                <label class="flex items-center gap-2 text-base">
+                  <input
+                    type="checkbox"
+                    name="guest-${index}-allergies"
+                    value="Nuts"
+                    class="h-5 w-5 border-stone-300 text-gold focus:ring-2 focus:ring-gold"
+                    ${nutsChecked}
+                  />
+                  <span>Nuts</span>
+                </label>
+              </div>
+            </fieldset>
+            <div>
+              <label for="guest-${index}-dietary" class="mb-2 block text-lg font-semibold">
+                Additional dietary or allergy details
+              </label>
+              <textarea
+                id="guest-${index}-dietary"
+                name="guest-${index}-dietary"
+                rows="3"
+                autocomplete="off"
+                class="w-full rounded-lg border-2 border-stone-300 px-4 py-4 text-lg focus:outline-none focus:ring-4 focus:ring-gold"
+                aria-describedby="guest-${index}-dietary-help"
+              >${escapeHtml(previous.dietary)}</textarea>
+              <p id="guest-${index}-dietary-help" class="mt-1 text-sm text-stone-600">
+                Add any other allergies (for example dairy) or dietary requirements.
+              </p>
+            </div>
+          `;
+
+          section.innerHTML = sectionHtml;
+          fragment.appendChild(section);
+        }
+
+        if (guestCountSelect.value === "5+") {
+          const note = document.createElement("p");
+          note.className = "rounded-md bg-amber-50 p-3 text-sm text-stone-800";
+          note.setAttribute("role", "note");
+          note.textContent =
+            "For parties larger than five, please include extra guest details in the additional dietary fields above or contact us directly.";
+          fragment.appendChild(note);
+        }
+
+        guestDetailsContainer.appendChild(fragment);
+      }
+
+      guestCountSelect.addEventListener("change", renderGuestSections);
 
       function setError(fieldId, message) {
         const field = document.getElementById(fieldId);
         const errorEl = document.getElementById(fieldId + "-error");
         if (!field || !errorEl) return;
+        const describedByHelp = field.getAttribute("data-describedby-help");
         if (message) {
           field.setAttribute("aria-invalid", "true");
           field.setAttribute("aria-describedby", fieldId + "-error");
@@ -332,11 +454,22 @@
           errorEl.classList.remove("hidden");
         } else {
           field.removeAttribute("aria-invalid");
-          if (fieldId !== "dietary") {
+          if (describedByHelp) {
+            field.setAttribute("aria-describedby", describedByHelp);
+          } else {
             field.removeAttribute("aria-describedby");
           }
           errorEl.textContent = "";
           errorEl.classList.add("hidden");
+        }
+      }
+
+      function clearGuestErrors(guestCount) {
+        for (let index = 0; index < guestCount; index += 1) {
+          if (index > 0) {
+            setError(`guest-${index}-name`, "");
+          }
+          setError(`guest-${index}-mealPreference`, "");
         }
       }
 
@@ -346,14 +479,7 @@
         const data = new FormData(form);
         const fullName = (data.get("fullName") || "").toString().trim();
         const guestCount = (data.get("guestCount") || "").toString().trim();
-        const mealPreference = (data.get("mealPreference") || "").toString().trim();
-        const allergies = data
-          .getAll("allergies")
-          .map(function (value) {
-            return value.toString().trim();
-          })
-          .filter(Boolean);
-        const dietary = (data.get("dietary") || "").toString().trim();
+        const guestTotal = guestCountToNumber(guestCount);
         const website = (data.get("website") || "").toString().trim();
 
         let hasError = false;
@@ -372,11 +498,28 @@
           setError("guestCount", "");
         }
 
-        if (!mealPreference) {
-          setError("mealPreference", "Please choose a meal preference.");
-          hasError = true;
-        } else {
-          setError("mealPreference", "");
+        if (guestTotal > 0 && guestDetailsContainer.hidden) {
+          renderGuestSections();
+        }
+
+        if (guestTotal > 0) {
+          clearGuestErrors(guestTotal);
+          const guests = collectGuestValuesFromDom();
+
+          guests.forEach(function (guest, index) {
+            if (index > 0 && !guest.name) {
+              setError(`guest-${index}-name`, "Please enter this guest's full name.");
+              hasError = true;
+            }
+
+            if (!guest.mealPreference) {
+              setError(
+                `guest-${index}-mealPreference`,
+                "Please choose a meal preference for this guest."
+              );
+              hasError = true;
+            }
+          });
         }
 
         if (hasError) {
@@ -389,15 +532,14 @@
           statusEl.textContent = "Thank you! Your RSVP has been recorded.";
           statusEl.className = "mt-4 text-base font-medium text-green-700";
           form.reset();
+          renderGuestSections();
           return;
         }
 
         const payload = {
           fullName,
           guestCount,
-          mealPreference,
-          allergies,
-          dietary,
+          guests: collectGuestValuesFromDom(),
           submittedAt: new Date().toISOString()
         };
 
@@ -421,6 +563,7 @@
           statusEl.textContent = "Thank you! Your RSVP has been recorded.";
           statusEl.className = "mt-4 text-base font-medium text-green-700";
           form.reset();
+          renderGuestSections();
         } catch (error) {
           statusEl.textContent =
             "We could not submit your RSVP right now. Please try again in a moment.";

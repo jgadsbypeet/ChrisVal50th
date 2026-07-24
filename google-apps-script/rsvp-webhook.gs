@@ -6,6 +6,7 @@ function doPost(e) {
     data.submittedAt || new Date().toISOString(),
     data.fullName || "",
     data.guestCount || "",
+    data.guestDetails || "",
     data.mealPreference || "",
     data.glutenFreeCeliac || "",
     data.nuts || "",
