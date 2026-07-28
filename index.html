@@ -238,26 +238,16 @@
       <section class="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6">
         <h2 class="text-2xl text-gold">Contact</h2>
         <p class="mt-2 text-base">
-          Questions? Reach out to [Name] or [Dad&apos;s Name] at [Phone/Email].
+          Questions? Reach out to Chris at
+          <a
+            href="mailto:contactme@hamby.co.uk"
+            class="font-semibold text-stone-900 underline decoration-gold decoration-2 underline-offset-2 focus:outline-none focus:ring-4 focus:ring-gold"
+          >
+            contactme@hamby.co.uk
+          </a>
+          .
         </p>
         <p class="mt-6 text-lg font-semibold">We can&apos;t wait to see you there!</p>
-        <details class="mx-auto mt-6 max-w-xl rounded-lg border border-gold bg-white p-4 text-left">
-          <summary class="cursor-pointer text-base font-semibold text-stone-900">Host admin tip</summary>
-          <p class="mt-2 text-sm text-stone-700">
-            To export RSVPs, open the Google Sheet, then use File &gt; Download &gt; Comma Separated Values (.csv).
-          </p>
-          <p class="mt-2 text-sm text-stone-700">
-            For live RSVPs, set <strong>GOOGLE_SHEETS_WEBHOOK_URL</strong> in Netlify site environment variables.
-          </p>
-          <p class="mt-2 text-sm text-stone-700">
-            Sheet headers (one row per guest): Timestamp, RSVP Contact, Party Size, Guest Name, Meal
-            Preference, Gluten free/Celiac, Nuts, Allergies, Additional Dietary Details.
-          </p>
-          <p class="mt-2 text-sm text-stone-700">
-            After updating <strong>google-apps-script/rsvp-webhook.gs</strong>, redeploy the Google web app
-            as a new version.
-          </p>
-        </details>
       </section>
     </footer>
 
